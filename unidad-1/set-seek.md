@@ -28,9 +28,12 @@ en este sistema el micro:bit es tanto el input como el output al igual que el co
 Crea tu propio programa en p5.js. En ti bitácora:
 
 Escribe el enlace a tu programa en el editor de p5.js.
-https://editor.p5js.org/felipemv20318/sketches/324PswCKd
+
+[Código p5](https://editor.p5js.org/felipemv20318/sketches/324PswCKd)
 
 Copia el código de tu programa en la bitácora (recuerda insertarlo usando markdown y el lenguaje javascript).
+
+``` js
 function setup() {
   createCanvas(600, 600);
   noLoop(); 
@@ -68,7 +71,9 @@ function mousePressed() {
   background(10);
   drawPattern(); 
 }
+```
 
 Muestra una captura de pantalla del resultado de tu programa.
+
 <img width="595" height="597" alt="image" src="https://github.com/user-attachments/assets/14581b17-a64f-4446-a303-e3e2c97d4db8" />
 
