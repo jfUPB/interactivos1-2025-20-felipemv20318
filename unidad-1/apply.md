@@ -4,18 +4,21 @@
 
 ### Actividad 05
 
-En tu bitácora: explica cómo funciona el sistema físico interactivo que acabamos de crear.  
-(d)
+En tu bitácora: explica cómo funciona el sistema físico interactivo que acabamos de crear.
+
+el sistema funciona haciendo que se mande constantemente con un velocidad moderada una señal moderada llamda N y hcemos que el microbit que es el input al ser presionado cambie la señal mandada a una de A y en el computador en p5.js que es el output al recibir una señal de A en lugar de N el cuadro deja de ser verde a ser rojo.
 
 ### Actividad 06
 
 En tu bitácora:
 
 Escribe el enlace a tu programa en el editor de p5.js.
-https://editor.p5js.org/felipemv20318/sketches/V0uAnF84h
+
+[Mi programna en p5.js](https://editor.p5js.org/felipemv20318/sketches/V0uAnF84h)
 
 Copia el código de tu programa en la bitácora (recuerda insertarlo usando markdown y el lenguaje javascript).
 
+``` js
 let port;
 let connectBtn;
 let connectionInitialized = false;
@@ -70,10 +73,13 @@ function connectBtnClick() {
     port.close();
   }
 }
+```
+
 
 
 Copia el código del micro:bit en la bitácora (recuerda insertarlo usando markdown y el lenguaje python).
 
+``` py
 from microbit import *
 
 uart.init(baudrate=115200)
@@ -85,7 +91,7 @@ while True:
         uart.write('B')
     else:
         uart.write('N')
-
     sleep(100)
+```
 
 
