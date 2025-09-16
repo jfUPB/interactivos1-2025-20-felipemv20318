@@ -33,8 +33,52 @@ Los dos primeros valores (xValue y yValue) se convierten a números enteros y se
 
 ### ¿Cómo se generan los eventos A pressed y B released que se generan en p5.js a partir de los datos que envía el micro:bit?
 
+En el sketch de p5.js los eventos A pressed y B released se generan en la función updateButtonStates() donde se comparan los estados actuales de los botones que llegan desde el micro:bit con los estados anteriores guardados en las variables prevmicroBitAState y prevmicroBitBState.
+
+Cuando el nuevo valor de aState pasa de false a true significa que el botón A fue presionado y en ese momento el código ejecuta las acciones correspondientes (cambiar tamaño de la línea, guardar la posición de clic y mostrar en consola “A pressed”) y cuando el nuevo valor de bState pasa de true a false significa que el botón B fue soltado y en ese momento se genera el evento B released que cambia el color de dibujo y muestra en consola “B released”.
+
+Estos estados se actualizan en cada ciclo gracias a la línea:
+
+    microBitAState = values[2].toLowerCase() === "true";
+    microBitBState = values[3].toLowerCase() === "true";
+    updateButtonStates(microBitAState, microBitBState);
+donde los valores enviados por el micro:bit (true o false en formato de texto) se convierten en valores booleanos y luego se pasan a la función encargada de detectar los cambios de estado que producen los eventos.
+
 ### Capturas de pantalla de los algunos dibujos que hayas hecho con el sketch.
 
 <img width="855" height="801" alt="image" src="https://github.com/user-attachments/assets/3390b684-877e-4b20-bd26-3a59b5525123" />
+
+
+## Actividad 2
+
+### Captura el resultado del experimento anterior. ¿Por qué se ve este resultado?
+
+<img width="755" height="542" alt="image" src="https://github.com/user-attachments/assets/14740dd9-bd3b-4b1b-93db-72cc7170a1d2" />
+
+En el experimento los datos ya no se envían en formato ASCII sino en formato binario mediante la instrucción:
+
+    data = struct.pack('>2h2B', xValue, yValue, int(aState), int(bState))
+
+Esto significa que cada paquete contiene 6 bytes: 2 bytes para xValue, 2 bytes para yValue y 1 byte para cada botón (aState y bState), todos enviados en big-endian.
+
+Cuando en el SerialTerminal se selecciona la opción “Mostrar datos como: Texto”, la aplicación intenta interpretar esos bytes binarios como caracteres de texto ASCII o UTF-8. Como la mayoría de los valores binarios no corresponden a caracteres imprimibles, en pantalla aparecen símbolos extraños, cuadros negros o caracteres aleatorios que no tienen sentido legible.
+
+Este resultado se ve así porque los datos son binarios y no están pensados para ser entendidos directamente como texto, sino para ser decodificados en el programa receptor (p5.js u otro).
+
+### Captura el resultado del experimento anterior. Lo que ves ¿Cómo está relacionado con esta línea de código?
+
+<img width="984" height="708" alt="image" src="https://github.com/user-attachments/assets/da594dee-a46e-406a-993c-14b8a050c949" />
+
+En el experimento los datos ya no se muestran como texto ASCII sino en su representación hexadecimal o byte por byte gracias a la instrucción:
+
+    data = struct.pack('>2h2B', xValue, yValue, int(aState), int(bState))
+
+Esto significa que cada paquete contiene 6 bytes: 2 bytes para xValue, 2 bytes para yValue y 1 byte para cada botón (aState y bState) todos enviados en big-endian.
+
+Cuando en el SerialTerminal se selecciona la opción “Mostrar datos como: Todo en HEX”, la aplicación ya no intenta interpretar los bytes como texto, sino que muestra directamente el valor numérico hexadecimal de cada byte transmitido.
+
+Este resultado se ve así porque el formato hexadecimal refleja exactamente la estructura binaria definida por struct.pack, pero es más difícil de leer para una persona que el texto en ASCII ya que requiere decodificar los bytes para obtener nuevamente los valores originales de xValue, yValue, aState y bState.
+
+### ¿Qué ventajas y desventajas ves en usar un formato binario en lugar de texto en ASCII?
 
 
