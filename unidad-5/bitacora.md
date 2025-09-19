@@ -81,4 +81,77 @@ Este resultado se ve así porque el formato hexadecimal refleja exactamente la e
 
 ### ¿Qué ventajas y desventajas ves en usar un formato binario en lugar de texto en ASCII?
 
+Sí, porque el formato hexadecimal muestra cada byte como un número en base 16, lo cual refleja con precisión la información transmitida, pero no es intuitivo para las personas. En ASCII, los datos se ven como palabras o símbolos reconocibles, mientras que en HEX sólo aparecen secuencias de números que necesitan ser interpretadas y decodificadas para entender su significado.
+
+En otras palabras, el texto en ASCII resulta más fácil de leer para un humano porque se asocia con caracteres visibles, mientras que el formato hexadecimal es útil para el computador o para depuración técnica, pero no está pensado para ser interpretado directamente como mensaje legible.
+
+### ¿Cuántos bytes se están enviando por mensaje? ¿Cómo se relaciona esto con el formato '>2h2B'? ¿Qué significa cada uno de los bytes que se envían?
+
+En el experimento se envían 6 bytes por mensaje. Esto ocurre porque la instrucción
+
+    data = struct.pack('>2h2B', xValue, yValue, int(aState), int(bState))
+
+indica que cada paquete debe contener:
+
+2 bytes para xValue (primer entero corto con signo).
+
+2 bytes para yValue (segundo entero corto con signo).
+
+1 byte para aState (estado del botón A).
+
+1 byte para bState (estado del botón B).
+
+El prefijo > significa que se envían en big-endian, es decir, primero el byte más significativo y luego el menos significativo.
+
+Así, los primeros 4 bytes corresponden al valor del acelerómetro en x y y, y los últimos 2 bytes corresponden al estado de los botones.
+
+### ¿Cómo se verían los números positivos y negativos en el formato '>2h2B'?
+
+Los valores de xValue y yValue se representan como enteros de 16 bits con signo (tipo h).
+
+Si el número es positivo, se guarda de forma directa en hexadecimal.
+Ejemplo: 200 → 00 C8.
+
+Si el número es negativo, se guarda usando complemento a dos en 16 bits.
+Ejemplo: -200 → FF 38.
+
+De esta manera, en el mensaje binario podemos ver valores positivos con bytes que comienzan en 00, mientras que los negativos suelen comenzar en FF u otro valor alto dependiendo de la magnitud.
+
+### ¿Qué diferencias ves entre los datos en ASCII y en binario? ¿Qué ventajas y desventajas ves en usar un formato binario en lugar de texto en ASCII? ¿Qué ventajas y desventajas ves en usar un formato ASCII en lugar de binario?
+
+En el experimento los datos enviados en ASCII aparecen como texto legible (por ejemplo: 123,-45,1,0), lo que permite que una persona los entienda fácilmente.
+En cambio, en binario aparecen como bytes en hexadecimal (por ejemplo: 00 7B FF D3 01 00), que son más compactos pero difíciles de leer sin decodificación.
+
+Binario:
+
+Ventajas: ocupa menos espacio, la transmisión es más rápida y no necesita conversión adicional.
+Desventajas: ilegible para una persona, depende de conocer el formato exacto para interpretarse.
+
+ASCII:
+
+Ventajas: legible y fácil de depurar, se pueden interpretar los valores sin herramientas extra.
+Desventajas: ocupa más bytes, la transmisión es más lenta y necesita conversión de texto a número en el programa receptor.
+
+
+## Actividad 3
+
+### Explica por qué en la unidad anterior teníamos que enviar la información delimitada y además marcada con un salto de línea y ahora no es necesario.
+
+En la unidad anterior los paquetes eran de longitud variable porque se enviaban como texto (ASCII) —por ejemplo "123,-45,1,0\n"— así que hacía falta un delimitador (el \n) para que el receptor supiera dónde termina cada paquete; sin ese delimitador el receptor no puede distinguir límites entre mensajes. En el formato binario que usamos después los paquetes tienen longitud fija (6 bytes para >2h2B), por eso el receptor puede leer siempre exactamente 6 bytes por paquete sin necesitar un carácter final que marque el cierre.
+
+### Compara el código de la unidad anterior relacionado con la recepción de los datos seriales que ves ahora. ¿Qué cambios observas?
+
+Antes se usaba readUntil("\n") y split(",") para procesar líneas de texto; ahora se usa readBytes() y DataView para leer bytes binarios, además se introdujo un serialBuffer para acumular bytes, se implementa búsqueda de header (0xAA) y comprobación de checksum, se reemplazó la conversión por int(values[0])/toLowerCase() por view.getInt16()/getUint8(), y se añadió port.clear() al conectar para evitar datos residuales.
+
+### ¿Qué ves en la consola? ¿Por qué crees que se produce este error?
+
+En la consola se ven lecturas correctas intercaladas con líneas con valores extraños (por ejemplo microBitY: 513 o microBitX: 3073) y números sueltos —esto ocurre porque el receptor a veces lee 6 bytes que no corresponden al mismo paquete (se desincroniza), ya sea porque la transmisión se fragmentó, porque había bytes residuales en el buffer o porque la lectura empezó a mitad de paquete; sin framing el receptor puede tomar bytes de dos paquetes distintos y entonces los getInt16/getUint8 devuelven valores incoherentes.
+
+### ¿Por qué necesitamos framing?
+
+Necesitamos framing (header + checksum) para sincronizar al receptor con el inicio del paquete y para verificar la integridad del paquete; el header permite descartar bytes hasta encontrar el comienzo real y el checksum detecta paquetes corruptos; juntos evitan desalineamientos y lecturas erráticas cuando la comunicación se fragmenta o hay ruido, haciendo la comunicación mucho más robusta.
+
+### Analiza el código, observa los cambios. Ejecuta y luego observa la consola. ¿Qué ves?
+
+Con framing implementado y el readSerialData() funcionando la consola muestra lecturas estables (microBitX: 500 microBitY: 524 microBitAState: true microBitBState: false), mensajes de estado (Connected to serial port, Microbit ready to draw, A pressed) y ocasionalmente Checksum error in packet si llega un paquete corrupto; ya no ves valores aleatorios como antes porque el receptor descarta bytes hasta encontrar 0xAA y sólo acepta paquetes cuyo checksum coincide.
 
