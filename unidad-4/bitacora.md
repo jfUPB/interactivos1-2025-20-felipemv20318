@@ -319,5 +319,6 @@ var myp5 = new p5(sketch);
 
 [https://youtu.be/8Dc0Oi2JqHE?si=VkT1XU_Jr8bWOeij](URL)
 
+NOta: profe al clikearlo no sirve no se porque no te redirige pero si lo copias y pegas funciona.
 
 
