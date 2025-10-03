@@ -8,3 +8,5 @@
 Describe lo que ves inicialmente en page1 y page2 en tu navegador.
 ¿Qué mensajes aparecieron en la terminal del servidor cuando abriste page1 y page2?
 Describe qué sucede en ambas páginas del navegador cuando mueves una de las ventanas. ¿Cambia algo visualmente? ¿Qué mensajes aparecen (si los hay) en la consola del navegador (usualmente accesible con F12 -> Pestaña Consola) y en la terminal del servidor?
+
+No hay evidencias de las actividades de la unidad. Nota: 0
