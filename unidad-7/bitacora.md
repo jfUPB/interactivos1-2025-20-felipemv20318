@@ -5,12 +5,23 @@
 
 ### ¿Qué URL de Dev Tunnels obtuviste? ¿Por qué crees que necesitamos usar esta URL en lugar de http://localhost:3000 o la IP local de tu computador para que el celular se conecte?
 
+Obtuve una URL similar a: https://h7mprn73-3000.use2.devtunnels.ms/mobile/
+Usamos esa dirección porque “localhost” solo funciona dentro del mismo computador, y el devtúnnels permite que otros dispositivos, como el celular, accedan al servidor desde Internet.
+
 ### Describe brevemente qué hace npm install y npm start.
+
+npm install descarga e instala todas las dependencias necesarias del proyecto.
+npm start ejecuta el servidor definido en el archivo principal (por ejemplo, server.js).
 
 ### ¿Qué mensajes observaste en la terminal del servidor al conectar el cliente de escritorio y el cliente móvil? ¿Eran diferentes los mensajes o identificadores?
 
+Aparecieron mensajes como “New client connected”, “Received message => …” y “Client disconnected”.
+Los dos clientes se conectaban con identificadores distintos, pero los mensajes eran parecidos.
+
 ### Describe el comportamiento observado: ¿Funcionó la interacción? ¿Hubo algún retraso (latencia)?
 
+Sí, la interacción funcionó. Al mover el dedo en el celular, el círculo en el computador se movía.
+Hubo muy poco o ningún retraso perceptible aunque como el profe explico en clase se debia hacer un minimo de movimiento para que el programa lo recibiera.
 
 ## Actividad 02
 
@@ -44,5 +55,6 @@
 ### Implementa tu diseño. Puedes usar IA generativa para ayudarte a escribir el código, pero primero debes hacer el diseño de lo que quieres.
 
 ### Incluye todos los códigos (servidor y clientes) en tu bitácora.
+
 
 
