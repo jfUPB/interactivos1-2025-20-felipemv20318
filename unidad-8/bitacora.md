@@ -4894,3 +4894,177 @@ recuerdas el programa de control del microbite que te di
 2) Incluye todos los códigos: servidor, cliente móvil, cliente de escritorio y micro:bit.
 
 
+```
+let socket;
+let drawColor = 'white';
+let drawShape = 'line'; // 'line' o 'circle'
+
+// Variables para manejar líneas separadas
+let drawing = [];        // Guarda todos los trazos previos
+let currentLine = [];    // Guarda el trazo actual
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(0);
+  socket = io();
+
+  // 🔹 Escuchar datos del micro:bit (botones)
+  socket.on('microbitData', (data) => {
+    const { aPressed, bPressed } = data;
+
+    // Cambiar color con botón A
+    if (aPressed) {
+      if (drawColor === 'white') drawColor = 'red';
+      else if (drawColor === 'red') drawColor = 'blue';
+      else if (drawColor === 'blue') drawColor = 'green';
+      else drawColor = 'white';
+      console.log('🎨 Nuevo color:', drawColor);
+    }
+
+    // Cambiar forma con botón B
+    if (bPressed) {
+      drawShape = (drawShape === 'line') ? 'circle' : 'line';
+      console.log('🖌️ Nuevo tipo de pincel:', drawShape);
+    }
+  });
+
+  // 🔹 Escuchar coordenadas desde el celular
+  socket.on('drawFromMobile', (data) => {
+    drawFromPhone(data.x, data.y, data.drawing);
+  });
+}
+
+function draw() {
+  background(0);
+
+  // 🔸 Dibujar todos los trazos previos con su color y forma original
+  for (let lineData of drawing) {
+    if (lineData.length > 0) {
+      stroke(lineData[0].color);
+      strokeWeight(4);
+      noFill();
+
+      beginShape();
+      for (let pt of lineData) {
+        if (pt.shape === 'line') {
+          vertex(pt.x, pt.y);
+        } else if (pt.shape === 'circle') {
+          circle(pt.x, pt.y, 15);
+        }
+      }
+      endShape();
+    }
+  }
+
+  // 🔸 Dibujar el trazo actual con su color actual
+  if (currentLine.length > 0) {
+    stroke(currentLine[0].color);
+    strokeWeight(4);
+    noFill();
+
+    beginShape();
+    for (let pt of currentLine) {
+      if (pt.shape === 'line') {
+        vertex(pt.x, pt.y);
+      } else if (pt.shape === 'circle') {
+        circle(pt.x, pt.y, 15);
+      }
+    }
+    endShape();
+  }
+}
+
+// 🔹 Recibir coordenadas desde el celular
+function drawFromPhone(x, y, drawingState) {
+  if (drawingState === 'start') {
+    // Inicia nuevo trazo
+    currentLine = [{ x, y, shape: drawShape, color: drawColor }];
+  } else if (drawingState === 'move') {
+    // Agrega puntos al trazo actual
+    currentLine.push({ x, y, shape: drawShape, color: drawColor });
+  } else if (drawingState === 'end') {
+    // Termina el trazo actual y lo guarda
+    drawing.push([...currentLine]);
+    currentLine = [];
+  }
+}
+
+```
+
+
+```
+let socket;
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(30);
+  socket = io();
+}
+
+function touchStarted() {
+  socket.emit('mobileDraw', { x: mouseX, y: mouseY, drawing: 'start' });
+  return false;
+}
+
+function touchMoved() {
+  socket.emit('mobileDraw', { x: mouseX, y: mouseY, drawing: 'move' });
+  return false;
+}
+
+function touchEnded() {
+  socket.emit('mobileDraw', { x: mouseX, y: mouseY, drawing: 'end' });
+  return false;
+}
+
+```
+
+
+
+```
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const { SerialPort, ReadlineParser } = require('serialport');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+app.use(express.static('public'));
+
+io.on('connection', (socket) => {
+  console.log('Cliente conectado:', socket.id);
+
+  // Recibir trazos del celular y reenviar al desktop
+  socket.on('mobileDraw', (data) => {
+    io.emit('drawFromMobile', data);
+  });
+});
+
+// ---- MICRO:BIT ----
+const serial = new SerialPort({
+  path: 'COM9', // ⚠️ Cambia este valor según el puerto real de tu micro:bit
+  baudRate: 115200
+});
+const parser = new ReadlineParser();
+serial.pipe(parser);
+
+parser.on('data', (line) => {
+  const values = line.trim().split(',');
+  // Esperamos 4 valores: x, y, a, b
+  if (values.length === 4) {
+    const [x, y, a, b] = values.map(Number);
+    const data = {
+      xValue: x,
+      aPressed: a === 1,
+      bPressed: b === 1
+    };
+    io.emit('microbitData', data);
+  }
+});
+
+server.listen(3000, () => {
+  console.log('✅ Server en: http://localhost:3000');
+});
+
+```
