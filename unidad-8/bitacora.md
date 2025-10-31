@@ -44,7 +44,8 @@ Conecta al mismo servidor por puerto serial o Bluetooth.
 
 ### 5) Haz un diagrama que explique cómo se comunicarán los diferentes componentes del sistema.
 
-<img width="1536" height="1024" alt="Diagrama de flujo de comunicación" src="https://github.com/user-attachments/assets/c21ac622-e5ef-4b79-877a-ff0f70a89934" />
+<img width="595" height="397" alt="image" src="https://github.com/user-attachments/assets/dc1aa44f-be11-4199-9a33-e393e1d04720" />
+
 
 
 ## Actividad 02
@@ -6753,4 +6754,5 @@ while True:
 Tu nota propuesta: mi nota propuesta es 5
 
 La defensa de esa nota para cada actividad: mi defensa de esa nota es que en base a los parametros dados meresco un 5 ya que yo tengo  las 2 actividades completas, la actividad 2 es 100% funcional y la autoevaluación (que es esta misma) por ello segun lo establecido meresco un 5.
+
 
