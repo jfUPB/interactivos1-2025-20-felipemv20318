@@ -6752,4 +6752,5 @@ while True:
 
 Tu nota propuesta: mi nota propuesta es 5
 
-La defensa de esa nota para cada actividad: mi defensa de esa nota es que en base a los para metros dados meresco un 5 ya que yo tengo  las 2 actividades completas, la actividad 2 es 100% funcional y la autoevaluación (que es esta misma) por ello segun lo establecido meresco un 5.
+La defensa de esa nota para cada actividad: mi defensa de esa nota es que en base a los parametros dados meresco un 5 ya que yo tengo  las 2 actividades completas, la actividad 2 es 100% funcional y la autoevaluación (que es esta misma) por ello segun lo establecido meresco un 5.
+
